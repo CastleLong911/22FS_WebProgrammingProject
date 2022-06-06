@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>우아한형제들소개 - 웹프로그래밍과제</title>
+    <style>
+        @font-face {
+            font-family: "kiranghaerang";
+            src: url("BMKIRANGHAERANG-TTF.ttf");
+        }
+        @font-face {
+            font-family: "hannaair";
+            src: url("BMHANNAAir_ttf.ttf");
+        }
+        *{
+            scroll-behavior: smooth;
+        }
+        body {
+            width: 100%;
+            height: 236vh;
+            background-color: #6abebe;
+            font-family: "hannaair";
+            font-weight: 700;
+        }
+
+        .header {
+            position: sticky;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100px;
+            
+            font-size: 50px;
+            font-weight: 900;
+            border-bottom: 2px;
+        }
+        .titleText{
+            left: 30px;
+        }
+        .bigTitleText {
+            font-size: 75px;
+        }
+        #logo{
+            height: 90px;
+        }
+        #car{
+            position: fixed; 
+            z-index: 99;
+            bottom: 110px; 
+            background: oilvedrab; 
+            width: 10px; 
+            height: 10px
+        }
+        .section{
+            position: relative;
+            margin-top: 100px;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+        }
+        li{
+            font-size: 50px;
+        }
+        #home{
+            position: fixed;
+            z-index: 99;
+            bottom: 100px;
+            right: 10px;
+        }
+        #home img{
+            height: 50px;
+        }
+        .mode{
+            display: inline;
+            position: absolute;
+            z-index: 99;
+            height: 50px;
+            width: 50px;
+            right: 100px;
+        }
+        #selectForm{
+            width: 100%;
+        }
+        /*#myCanvas{
+            width: 80vh;
+            height: 60vh;
+            background-color: white;
+        }*/
+    </style>
+</head>
+
+<body id="body" onload="init()">
+    <div class="header"">
+       <img src="wooahbroslogo.png" id="logo">
+       <div class="mode">
+           <form id="selectForm">
+               <select id="selectMode" onchange="changeMode()">
+                   <option value="light">light</option>
+                   <option value="dark">dark</option>
+               </select>
+           </form>
+       </div>
+    </div>
+    <div id="car"><img src="baeminRider1.png" height="100px" width="100px"></div>
+    <br>
+    <br>
+    <div class="section" id="history">
+        <ul>
+            <li>역사</li><br>   
+            디자이너 출신인 '김봉진' 대표   가 2010년 11월에 설립한 회사입니다. <br><br>
+            개발 초기에는 전화번호부로 개발을 시작했지만, 수익 모델이 변변찮고 이용률도 적어 다른 분야를 찾다가 배달로 눈을 돌리게 되어 현재의 배달의 민족을 개발했습니다.<br><br>
+            2020년에는 독일의 Delivery Hero가 배달의민족을 인수해 현재는 DH를 모기업으로 두고 있습니다.<br><br>
+            2020년 7월에는 베트남에도 진출했으며, 싱가포르에 DH와 함께 우아DH아시아란 회사를 합작해서 세계로 뻗어나가고 있습니다.<br><br>
+            <li>배달의 민족</li>
+            우아한 형제들의 대표적인 어플리케이션 배달의 민족은 젊은 친구들이 이것저것 많이 배달 음식을 시켜먹는다는 의미에서 배달의 민족이라고도 하고 밝은 땅에 사는 민족이라는 중의적 의미가 있다고 말했습니다.
+        </ul>
+    </div>
+    <div class="section" id="now" style="opacity: 0;">
+        <canvas id="myCanvas" width="800" height="600">
+        </canvas>
+    </div>
+
+    <div class="section" id="video">
+        <video width="750px" autoplay muted loop>
+            <source src="mainService.mp4" type="video/mp4"">
+        </video>
+    </div>
+    <a id="home" href="#"><img src="triangle.png"></a>
+</body>
+<script>
+    var car, scrY, section;
+    var drawCanvas = false;
+    function init(){
+        car = document.getElementById("car");
+        section = document.getElementsByClassName("section");
+        window.addEventListener("scroll", function (e) {
+            scrY = this.scrollY;
+            carMove();
+            scrolling();
+        });
+    }
+    function carMove() {
+        if (scrY < window.outerWidth) {
+            car.style.left = scrY*1.2 + 'px';
+        }
+    }
+    function scrolling(){
+        for(var i = 0; i < section.length; i++){
+            var offset = section[i].offsetHeight;
+            var offsetY = section[i].getBoundingClientRect().top + offset/2;
+            if(offsetY > 0){
+                section[i].style.opacity = (1.3 - Math.abs(window.innerHeight/2 - offsetY)/100);
+            }
+            if(section[1].style.opacity >= 1 && !drawCanvas){
+                drawCanvas = true;
+                drawChart();
+            }
+            else if(drawCanvas && section[1].style.opacity < 0){
+                drawCanvas = false;
+                clearChart(); 
+            }
+        }
+    }
+    function drawChart(){
+        var apps = new Array;
+        apps[0] = 207;
+        apps[1] = 90;
+        apps[2] = 65;
+
+        var appNames = new Array;
+        appNames[0] = "배달의민족";
+        appNames[1] = "요기요";
+        appNames[2] = "쿠팡이츠";
+
+        var appLength = 3;
+        var graphWidth;
+        var canvasWidth;
+        var canvasUnit;
+        var canvas = document.getElementById("myCanvas");
+        canvasWidth = canvas.width;
+        canvasHeight = canvas.height;
+        graphWidth = canvasWidth/(appLength*3);
+        var context = canvas.getContext("2d");
+        context.lineWidth = 2;
+        context.font = "bold 20pt '맑은고딕'";
+        context.textAlign = "center";
+        context.fillStyle = "white";
+        context.fillRect(0,0,canvasWidth,canvasHeight);
+        context.fillStyle = "brown";
+        for(let j = 0; j < 100; j++){
+            
+            if(!drawCanvas)
+                break;
+            
+            setTimeout(function(){
+                var time = j;
+                clearChart();
+                for(var i = 1; i <= apps.length; i++){
+                if(i == 1){
+                    context.fillStyle = "#6abebe";
+                }
+                else
+                    context.fillStyle = "brown";
+                context.fillRect((graphWidth*3*i-graphWidth*2), (canvasHeight - (apps[i-1]/canvasHeight*1000) * (time/99)) - 50, graphWidth, ((apps[i-1]/canvasHeight*1000) * (time/99)));
+                context.fillStyle = "black";
+                context.fillText(appNames[i-1], (graphWidth*3*i-graphWidth*2)+graphWidth/2, (canvasHeight - (apps[i-1]/canvasHeight*1000) * (time/99)) - 60, 150);
+                context.fillText("국내 배달 앱 점유율", canvasWidth/2, canvasHeight - 10, 150);
+            }    
+            }, 10*j);
+            
+        }
+    }
+    function clearChart(){  
+        var canvas = document.getElementById("myCanvas");
+        var context = canvas.getContext("2d");
+        context.fillStyle = "white";
+        context.fillRect(0,0,canvas.width,canvas.height);
+        context.fillStyle = "brown";
+    }
+
+    function changeMode(){
+        var modeSelect= document.getElementById("selectMode");
+
+        if(modeSelect.options[modeSelect.selectedIndex].text == 'light'){
+            var body = document.getElementById("body");
+            body.style.backgroundColor = "#6abebe";
+            body.style.color = "black";
+        }
+        else if(modeSelect.value == "dark"){
+            var body = document.getElementById("body");
+            body.style.backgroundColor = "black";
+            body.style.color = "white";
+            var home = document.getElementById("home");
+            home.style.filter = "invert(100%)";
+        }
+    }
+</script>
+</html>
